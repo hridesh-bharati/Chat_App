@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <title>Chat Form</title>
+    <style>
+        li {
+            list-style-type: none !important;
+            color: rgb(0, 0, 0);
+            margin: 20px 0 !important;
+            position: relative;
+        }
+
+        .col ul li {
+            background-color: #DCF8C6;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 300px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .col ul li::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-top-color: #DCF8C6;
+            border-bottom: 0;
+            border-left: 0;
+            margin-left: -10px;
+            margin-bottom: -10px;
+        }
+
+        .transParentData {
+            background: transparent !important;
+        }
+
+        body {
+            background: url(bg.jpg) !important;
+        }
+
+        .custom-file-input {
+            color: transparent;
+        }
+
+        .custom-file-input::file-selector-button {
+            display: none !important;
+        }
+
+        .custom-file-input {
+            width: 0;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+
+        .custom-file-label {
+            background-color: #128C7E;
+            width: 200px;
+            color: white;
+            padding: 0 0 0 50px;
+            cursor: pointer;
+            display: inline-block;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-image-fill' viewBox='0 0 16 16'%3E%3Cpath d='M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-size: 16px;
+            background-position: 10px center;
+        }
+
+        #chat-window {
+            margin: auto;
+            height: 70vh;
+            overflow-y: auto !important;
+        }
+
+        .zoom-in {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .zoom-in:hover {
+            transform: scale(2);
+        }
+
+        .delete-message {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 2px 5px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .HidenData {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: rotate(90deg);
+            z-index: 99999;
+            color: rgb(58, 58, 58);
+            user-select: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid  pt-5 position-absolute bottom-0 right-0">
+        <div class="row container justify-content-center align-items-end g-2" id="chat-window">
+            <div class="col">
+                <ul id="other-messages"></ul>
+            </div>
+
+            <div class="col">
+                <ul id="your-messages"></ul>
+            </div>
+
+        </div>
+
+        <div class="row w-100 g-2 py-3">
+            <div class="col-lg-8 col-sm-12 col-12 m-auto d-flex justify-content-center align-items-center bg-dark p-1">
+                <div class="mx-2">
+                    <li class="nav-item dropdown dropup d-inline-block">
+                        <a class="nav-link d-inline-block w-25" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-paperclip text-white"></i>
+                        </a>
+                        <ul class="dropdown-menu mb-3 bg-secondary">
+                            <li> <label for="image-input" class="custom-file-label">Photos & Videos</label>
+                                <input type="file" class="custom-file-input" id="image-input">
+                            </li>
+                        </ul>
+                    </li>
+                </div>
+                <div class="w-75 mx-2">
+                    <input type="text" class="w-100 form-control" id="message-input" placeholder="Type a message"
+                        autofocus autocomplete="off">
+                </div>
+
+                <div class="col-4 mx-2">
+                    <button class="btn btn-success" id="send-button">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <small class="HidenData">Design by Hridesh</small>
+    <audio id="ringtone" src="ring.mp3"></audio>
+    <audio id="cut" src="cut.mp3"></audio>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+    <!-- Include Socket.IO library -->
+    <script src="https://cdn.socket.io/4.3.1/socket.io.min.js"></script>
+    <script>
+        // Establish connection to Socket.IO server
+        const socket = io();
+
+        // Select necessary DOM elements
+        const yourMessages = document.getElementById('your-messages');
+        const otherMessages = document.getElementById('other-messages');
+        const messageInput = document.getElementById('message-input');
+        const imageInput = document.getElementById('image-input');
+        const sendButton = document.getElementById('send-button');
+        const ringtone = document.getElementById('ringtone');
+        const cut = document.getElementById('cut');
+        // Define username variable
+        let username;
+
+        // Function to add messages to the DOM
+        function addMessage(user, message, targetElement) {
+            const li = document.createElement('li');
+            li.innerHTML = `${user}: ${message}`;
+            targetElement.appendChild(li);
+
+            // If the message is an image, add zoom-in class
+            if (message.includes('<img')) {
+                li.querySelector('img').classList.add('zoom-in');
+            }
+
+            // Add delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('delete-message');
+            deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
+            deleteButton.onclick = function () {
+                li.remove();
+                cut.play();
+            };
+            li.appendChild(deleteButton);
+
+
+        }
+
+        // Function to send message
+        function sendMessage(message) {
+            socket.emit('chat', { username: username, message: message });
+            addMessage(username, message, yourMessages);
+        }
+        // Event listener for send button click
+        sendButton.addEventListener('click', function () {
+            const message = messageInput.value;
+            if (message.trim() !== '') {
+                sendMessage(message);
+                messageInput.value = ''; // Clear the input field
+            } else if (imageInput.files.length > 0) { // Check if an image is selected
+                const file = imageInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const imageMessage = `<img src="${event.target.result}" style="max-width: 100px;">`;
+                    sendMessage(imageMessage);
+                };
+                reader.readAsDataURL(file);
+                imageInput.value = ''; // Clear the image input
+                document.getElementById('image-label').innerText = 'Photos & Videos';
+            } else {
+                alert('Please enter a message or select an image.');
+            }
+            ringtone.play();
+        });
+
+        // Event listener for image input change
+        imageInput.addEventListener('change', function () {
+            const file = imageInput.files[0];
+            if (file) {
+                document.getElementById('image-label').innerText = file.name;
+            }
+        });
+
+        // Receive message from the server and display it
+        socket.on('chat', function (data) {
+            addMessage(data.username, data.message, otherMessages);
+        });
+
+        // Prompt the user to enter their username
+        window.onload = function () {
+            username = prompt('Enter your username:');
+            socket.emit('newuser', username);
+        }
+
+        // Emit an event when the user leaves the page
+        window.addEventListener('beforeunload', function () {
+            socket.emit('exituser', username);
+        });
+    </script>
+
+</body>
+
+</html>
